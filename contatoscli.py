@@ -1,13 +1,35 @@
+# Exportar dados cadastrados para Excel
+from openpyxl import Workbook
+def exportar_para_excel():
+    # Cria um novo workbook
+    workbook = Workbook()
+            
+    # Seleciona a planilha ativa
+    sheet = workbook.active
+            
+    # Escreve o cabeçalho
+    sheet['A1'] = 'Nome'
+    sheet['B1'] = 'Telefone'
+            
+    # Escreve os contatos
+    for i, (nome, telefone) in enumerate(contact.items(), start=2):
+        sheet.cell(row=i, column=1, value=nome)
+        sheet.cell(row=i, column=2, value=telefone)
+            
+    # Salva o arquivo Excel
+    workbook.save('contatos.xlsx')
+
 # Cria o dicionário de contatos
 contact = {}
-# Função que mostra lista de contatos cadastrados e seu número de telefone
+# Função que mostra lista de contatos cadastrados em ordem alfabética
 def mostrar_contato():
     print("Nome\t\t\tTelefone")
-    for key in contact:
-        print("{}\t\t{}".format(key,contact.get(key)))
+    for key in sorted(contact.keys()):
+        print("{}\t\t{}".format(key, contact.get(key)))
+
 
 # Mensagem de inicialização
-print("<ContatosCLI> Versão 1.0\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\nCódigo-fonte disponível em: https://github.com/bernardokrz/ContatosCLI\n")
+print("<ContatosCLI> Versão 1.0\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\n")
 
 # Menu principal
 while True:
@@ -50,7 +72,8 @@ while True:
             mostrar_contato()
         else:
             print("\n**Contato não encontrado.")
-# Encerrando o programa
+# Encerrando o programa e gerando arquivo Excel:
     else:
         print("**Encerrando...")
+        exportar_para_excel()
         break
