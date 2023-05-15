@@ -1,4 +1,4 @@
 1.2 - Arquivos do Excel gerados no final do programa agora possuem timestamps de data e hora, e também são gerados em ordem alfabética.
-		-	Durante a execução do programa (sessão), só serão exibidos os contatos cadastrados naquela sessão, para fins de edição antes de gravar no Excel.
+		- Durante a execução do programa (sessão), só serão exibidos os contatos cadastrados naquela sessão, para fins de edição antes de gravar no Excel.
 1.1 - Salva os contatos cadastrados em um arquivo Excel salvo na pasta do projeto.
 1.0 - Lançamento original
