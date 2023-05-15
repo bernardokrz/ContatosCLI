@@ -1,6 +1,9 @@
 # Exportar dados cadastrados para Excel
 from openpyxl import Workbook
 def exportar_para_excel():
+    # Ordena os contatos em ordem alfabética pelo nome
+    contatos_ordenados = sorted(contact.keys())
+
     # Cria um novo workbook
     workbook = Workbook()
             
@@ -11,13 +14,19 @@ def exportar_para_excel():
     sheet['A1'] = 'Nome'
     sheet['B1'] = 'Telefone'
             
-    # Escreve os contatos
-    for i, (nome, telefone) in enumerate(contact.items(), start=2):
+    # Escreve os contatos em ordem alfabética
+    for i, nome in enumerate(contatos_ordenados, start=2):
+        telefone = contact[nome]
         sheet.cell(row=i, column=1, value=nome)
         sheet.cell(row=i, column=2, value=telefone)
-            
+
+    # Gera o timestamp para o nome do arquivo
+    import datetime
+    timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+    nome_arquivo = f"contatos_{timestamp}.xlsx"
+    
     # Salva o arquivo Excel
-    workbook.save('contatos.xlsx')
+    workbook.save(nome_arquivo)
 
 # Cria o dicionário de contatos
 contact = {}
@@ -29,7 +38,7 @@ def mostrar_contato():
 
 
 # Mensagem de inicialização
-print("<ContatosCLI> Versão 1.0\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\n")
+print("<ContatosCLI> Versão 1.2\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\n")
 
 # Menu principal
 while True:
@@ -37,6 +46,7 @@ while True:
 
 # Opções do menu
     if escolha == 1:
+
         nome = input("Digite o nome do contato: ")
         telefone = input("Digite o telefone com DDD: ")
         contact[nome] = telefone
@@ -51,7 +61,7 @@ while True:
         if not contact:
             print("\n**Lista de contatos vazia!")
         else:
-            print("-------------TODOS OS CONTATOS-------------")
+            print("-------------CONTATOS CADASTRADOS (nesta sessão)-------------")
             mostrar_contato()
     elif escolha == 4:
         editar_contato = input("Digite o nome do contato a ser editado: ")
