@@ -7,7 +7,7 @@ def mostrar_contato():
         print("{}\t\t{}".format(key,contact.get(key)))
 
 # Mensagem de inicialização
-print("<ContatosCLI> Versão 1.0\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\n")
+print("<ContatosCLI> Versão 1.0\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\nCódigo-fonte disponível em: https://github.com/bernardokrz/ContatosCLI\n")
 
 # Menu principal
 while True:
