@@ -1,92 +1,97 @@
-# Exportar dados cadastrados para Excel
-from openpyxl import Workbook
+import openpyxl
+import os
 
-# Cria o dicionário de contatos
-contact = {}
-
-def exportar_para_excel():
-    # Ordena os contatos em ordem alfabética pelo nome
-    contatos_ordenados = sorted(contact.keys())
-
-    # Cria um novo workbook
-    workbook = Workbook()
-            
-    # Seleciona a planilha ativa
-    sheet = workbook.active
-            
-    # Escreve o cabeçalho
-    sheet['A1'] = 'Nome'
-    sheet['B1'] = 'Telefone'
-            
-    # Escreve os contatos em ordem alfabética
-    for i, nome in enumerate(contatos_ordenados, start=2):
-        telefone = contact[nome]
-        sheet.cell(row=i, column=1, value=nome)
-        sheet.cell(row=i, column=2, value=telefone)
-
-    # Gera o timestamp para o nome do arquivo
-    import datetime
-    timestamp = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    nome_arquivo = f"contatos_{timestamp}.xlsx"
+def cadastrar_registro(sheet):
+    nome = input("Digite o nome: ")
+    empresa = input("Digite a empresa: ")
+    telefone = input("Digite o telefone (com DDD): ")
     
-    # Salva o arquivo Excel
-    workbook.save(nome_arquivo)
+    # Armazena os dados em uma lista
+    registro = [nome, empresa, telefone]
+    
+    # Adiciona o registro à planilha
+    sheet.append(registro)
+    
+    # Imprime a pré-planilha
+    imprimir_planilha(sheet)
 
+    print("Registro adicionado com sucesso!")
 
-# Função que mostra lista de contatos cadastrados em ordem alfabética
-def mostrar_contato():
-    print("Nome\t\t\tTelefone")
-    for key in sorted(contact.keys()):
-        print("{}\t\t{}".format(key, contact.get(key)))
+def editar_registro(sheet):
+    numero_linha = int(input("Digite o número da linha que deseja editar: "))
+    
+    if 1 <= numero_linha <= sheet.max_row:
+        nome = input("Digite o novo nome: ")
+        empresa = input("Digite a nova empresa: ")
+        telefone = input("Digite o novo telefone (com DDD): ")
+        
+        # Atualiza os dados na planilha
+        sheet.cell(row=numero_linha, column=1, value=nome)
+        sheet.cell(row=numero_linha, column=2, value=empresa)
+        sheet.cell(row=numero_linha, column=3, value=telefone)
 
+        # Imprime a pré-planilha
+        imprimir_planilha(sheet)
 
-# Mensagem de inicialização
-print("<ContatosCLI> Versão 1.2\npor Bernardo Krzysczak - krz02@proton.me\nSOFTWARE LIVRE PARA USO PESSOAL E COMERCIAL\n")
-
-# Menu principal
-while True:
-    escolha = int(input("1. Novo contato\n2. Pesquisar contato\n3. Exibir contatos cadastrados\n4. Editar contato\n5. Apagar contato\n6. Sair\n\nEscolha a opção desejada: "))
-
-# Opções do menu
-    if escolha == 1:
-
-        nome = input("Digite o nome do contato: ")
-        telefone = input("Digite o telefone com DDD: ")
-        contact[nome] = telefone
-        print("\n**Contato cadastrado.\n")
-    elif escolha == 2:
-        procurar_nome = input("Digite o nome do contato: ")
-        if procurar_nome in contact:
-            print("\n**O número de",procurar_nome,"é:", contact[procurar_nome], "\n")
-        else:
-            print("\n**Contato não encontrado.")
-    elif escolha == 3:
-        if not contact:
-            print("\n**Lista de contatos vazia!")
-        else:
-            print("-------------CONTATOS CADASTRADOS (nesta sessão)-------------")
-            mostrar_contato()
-    elif escolha == 4:
-        editar_contato = input("Digite o nome do contato a ser editado: ")
-        if editar_contato in contact:
-            telefone = input("Digite o novo telefone com DDD: ")
-            contact[editar_contato]=telefone
-            print("\n**Contato atualizado.\n")
-            mostrar_contato()
-        else:
-            print("\n**Contato não encontrado.")
-    elif escolha == 5:
-        apagar_contato = input("Digite o nome do contato a ser apagado: ")
-        if apagar_contato in contact:
-            confirmar = input("Tem certeza que deseja apagar este contato?(s/n): ")
-            if confirmar == 's' or confirmar =='S':
-                contact.pop(apagar_contato)
-                print("\n**Contato apagado.\n")
-            mostrar_contato()
-        else:
-            print("\n**Contato não encontrado.")
-# Encerrando o programa e gerando arquivo Excel:
+        print("Registro atualizado com sucesso!")
     else:
-        print("**Encerrando...")
-        exportar_para_excel()
+        print("Linha não encontrada.")
+
+def deletar_registro(sheet):
+    numero_linha = int(input("Digite o número da linha que deseja deletar: "))
+    
+    if 1 <= numero_linha <= sheet.max_row:
+        sheet.delete_rows(numero_linha)
+
+        # Imprime a pré-planilha
+        imprimir_planilha(sheet)
+
+        print("Registro deletado com sucesso!")
+    else:
+        print("Linha não encontrada.")
+
+def imprimir_planilha(sheet):
+    print("\nPré-Planilha:")
+    for row in sheet.iter_rows(values_only=True):
+        print(" | ".join(map(str, row)))
+
+# Verifica se o arquivo 'Contatos.xlsx' já existe
+if os.path.exists("Contatos.xlsx"):
+    # Se existe, abre o arquivo existente
+    workbook = openpyxl.load_workbook("Contatos.xlsx")
+    sheet = workbook.active
+else:
+    # Se não existe, cria um novo arquivo e adiciona um cabeçalho
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Contatos"
+    sheet.append(["Nome", "Empresa", "Telefone (com DDD)"])
+
+# Seção "Sobre" a imprimir no início do programa
+print("ContatosCLI v2.0 - Copyright (C) Bernardo Krzysczak <bernardokrz@gmail.com>")
+print("EN: This software is licensed under the GNU General Public License v3.0 and provided as is. Any forks and/or derivatives must reference this project with the author's name and contact.")
+
+print("BR: Este software é licenciado sob a GNU General Public License v3.0 e disponibilizado no estado em que se encontra. Quaisquer forks e/ou derivados devem referenciar este projeto com o nome do autor e contato.")
+while True:
+    print("\nMenu:")
+    print("1 - Cadastrar registro")
+    print("2 - Editar registro")
+    print("3 - Deletar registro")
+    print("4 - Sair")
+    
+    opcao = input("Escolha uma opção: ")
+    
+    if opcao == '1':
+        cadastrar_registro(sheet)
+    elif opcao == '2':
+        editar_registro(sheet)
+    elif opcao == '3':
+        deletar_registro(sheet)
+    elif opcao == '4':
+        # Salva a planilha e sai do programa
+        workbook.save("Contatos.xlsx")
+        print("Planilha Excel gerada/atualizada com sucesso.")
+        print("Saindo do programa.")
         break
+    else:
+        print("Opção inválida. Por favor, escolha uma opção válida.")
